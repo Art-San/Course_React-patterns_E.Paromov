@@ -1,176 +1,195 @@
-import { useEffect, useState, useRef } from 'react';
-import { nanoid } from 'nanoid';
-import styles from './App.module.css';
+import { useEffect, useState, useRef } from 'react'
+import { nanoid } from 'nanoid'
+import styles from './App.module.css'
+import { TracksAction } from './components/tracks-actions'
+import { TracksCell } from './components/tracks-cell'
+import { TracksTaskRow } from './components/tracks-task-row'
+import { TableTrack } from './components/table-track'
+import { TracksSummaryRow } from './components/tracks-summary-row'
+import { TracksDayHeadCell } from './components/tracks-day-head-cell'
+import { TracksTable } from './components/tracks-table'
 
 interface Track {
-  id: string;
-  name: string;
-  task: string;
-  hours: number;
-  date: string;
+  id: string
+  name: string
+  task: string
+  hours: number
+  date: string
 }
 
 const App = () => {
-  const [tracks, setTracks] = useState<Track[]>([]);
-  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [hideWeekends, setHideWeekends] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedCell, setSelectedCell] = useState<{ day: number; task: string } | null>(null);
-  const [selectedTrack, setSelectedTrack] = useState<Track | null>(null);
+  const [tracks, setTracks] = useState<Track[]>([])
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth())
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
+  const [hideWeekends, setHideWeekends] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedCell, setSelectedCell] = useState<{
+    day: number
+    task: string
+  } | null>(null)
+  const [selectedTrack, setSelectedTrack] = useState<Track | null>(null)
   const [formData, setFormData] = useState({
     name: '',
     task: '',
     hours: 0,
     date: new Date().toISOString().split('T')[0]
-  });
-  const tableContainerRef = useRef<HTMLDivElement>(null);
-  const currentDayRef = useRef<HTMLTableCellElement>(null);
+  })
+  const tableContainerRef = useRef<HTMLDivElement>(null)
+  const currentDayRef = useRef<HTMLTableCellElement>(null)
 
   useEffect(() => {
-    fetchTracks();
-  }, [selectedMonth, selectedYear]);
+    fetchTracks()
+  }, [selectedMonth, selectedYear])
 
   useEffect(() => {
     if (selectedCell) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         task: selectedCell.task,
-        date: `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}-${String(selectedCell.day).padStart(2, '0')}`
-      }));
+        date: `${selectedYear}-${String(selectedMonth + 1).padStart(
+          2,
+          '0'
+        )}-${String(selectedCell.day).padStart(2, '0')}`
+      }))
     } else {
       setFormData({
         name: '',
         task: '',
         hours: 0,
         date: new Date().toISOString().split('T')[0]
-      });
+      })
     }
-  }, [selectedCell, selectedMonth, selectedYear]);
+  }, [selectedCell, selectedMonth, selectedYear])
 
   useEffect(() => {
-    fetchTracks();
-  }, [selectedMonth, selectedYear]);
+    fetchTracks()
+  }, [selectedMonth, selectedYear])
 
   useEffect(() => {
-    const today = new Date();
+    const today = new Date()
     if (
-      today.getMonth() === selectedMonth && 
+      today.getMonth() === selectedMonth &&
       today.getFullYear() === selectedYear &&
       currentDayRef.current &&
       tableContainerRef.current
     ) {
-      const container = tableContainerRef.current;
-      const cell = currentDayRef.current;
-      const containerWidth = container.offsetWidth;
-      const cellLeft = cell.offsetLeft;
-      const cellWidth = cell.offsetWidth;
+      const container = tableContainerRef.current
+      const cell = currentDayRef.current
+      const containerWidth = container.offsetWidth
+      const cellLeft = cell.offsetLeft
+      const cellWidth = cell.offsetWidth
 
       // Center the current day in the container
-      container.scrollLeft = cellLeft - (containerWidth / 2) + (cellWidth / 2);
+      container.scrollLeft = cellLeft - containerWidth / 2 + cellWidth / 2
     }
-  }, [selectedMonth, selectedYear, hideWeekends]);
+  }, [selectedMonth, selectedYear, hideWeekends])
 
   const fetchTracks = async () => {
     try {
-      const response = await fetch('http://localhost:3000/tracks');
-      const data = await response.json();
-      setTracks(data);
+      const response = await fetch('http://localhost:3000/tracks')
+      const data = await response.json()
+      setTracks(data)
     } catch (error) {
-      console.error('Error fetching tracks:', error);
+      console.error('Error fetching tracks:', error)
     }
-  };
+  }
 
   const getUniqueTasks = () => {
-    const monthTracks = tracks.filter(track => {
-      const trackDate = new Date(track.date);
-      return trackDate.getMonth() === selectedMonth && trackDate.getFullYear() === selectedYear;
-    });
-    return [...new Set(monthTracks.map(track => track.task))];
-  };
+    const monthTracks = tracks.filter((track) => {
+      const trackDate = new Date(track.date)
+      return (
+        trackDate.getMonth() === selectedMonth &&
+        trackDate.getFullYear() === selectedYear
+      )
+    })
+    return [...new Set(monthTracks.map((track) => track.task))]
+  }
 
   const getDaysInMonth = () => {
-    return new Date(selectedYear, selectedMonth + 1, 0).getDate();
-  };
+    return new Date(selectedYear, selectedMonth + 1, 0).getDate()
+  }
 
   const getVisibleDays = () => {
-    const days = Array.from({ length: getDaysInMonth() }, (_, i) => i + 1);
-    return hideWeekends ? days.filter(day => !isWeekend(day)) : days;
-  };
+    const days = Array.from({ length: getDaysInMonth() }, (_, i) => i + 1)
+    return hideWeekends ? days.filter((day) => !isWeekend(day)) : days
+  }
 
   const isWeekend = (day: number) => {
-    const date = new Date(selectedYear, selectedMonth, day);
-    return date.getDay() === 0 || date.getDay() === 6;
-  };
+    const date = new Date(selectedYear, selectedMonth, day)
+    return date.getDay() === 0 || date.getDay() === 6
+  }
 
   const getDayTracks = (day: number, task: string) => {
-    return tracks.filter(track => {
-      const trackDate = new Date(track.date);
+    return tracks.filter((track) => {
+      const trackDate = new Date(track.date)
       return (
         trackDate.getDate() === day &&
         trackDate.getMonth() === selectedMonth &&
         trackDate.getFullYear() === selectedYear &&
         track.task === task
-      );
-    });
-  };
+      )
+    })
+  }
 
   const getDayTotal = (day: number) => {
     return tracks
-      .filter(track => {
-        const trackDate = new Date(track.date);
+      .filter((track) => {
+        const trackDate = new Date(track.date)
         return (
           trackDate.getDate() === day &&
           trackDate.getMonth() === selectedMonth &&
           trackDate.getFullYear() === selectedYear
-        );
+        )
       })
-      .reduce((sum, track) => sum + track.hours, 0);
-  };
+      .reduce((sum, track) => sum + track.hours, 0)
+  }
 
   const getTaskTotal = (task: string) => {
     return tracks
-      .filter(track => {
-        const trackDate = new Date(track.date);
+      .filter((track) => {
+        const trackDate = new Date(track.date)
         return (
           trackDate.getMonth() === selectedMonth &&
           trackDate.getFullYear() === selectedYear &&
           track.task === task
-        );
+        )
       })
-      .reduce((sum, track) => sum + track.hours, 0);
-  };
+      .reduce((sum, track) => sum + track.hours, 0)
+  }
 
   const getMonthTotal = () => {
     return tracks
-      .filter(track => {
-        const trackDate = new Date(track.date);
-        return trackDate.getMonth() === selectedMonth && trackDate.getFullYear() === selectedYear;
+      .filter((track) => {
+        const trackDate = new Date(track.date)
+        return (
+          trackDate.getMonth() === selectedMonth &&
+          trackDate.getFullYear() === selectedYear
+        )
       })
-      .reduce((sum, track) => sum + track.hours, 0);
-  };
+      .reduce((sum, track) => sum + track.hours, 0)
+  }
 
   const handleCellClick = (day: number, task: string) => {
-    setSelectedCell({ day, task });
-    setIsModalOpen(true);
-  };
+    setSelectedCell({ day, task })
+    setIsModalOpen(true)
+  }
 
   const handleUpdateTrack = (e: React.MouseEvent, track: Track) => {
-    e.stopPropagation();
-    setSelectedTrack(track);
+    e.stopPropagation()
+    setSelectedTrack(track)
     setFormData({
       name: track.name,
       task: track.task,
       hours: track.hours,
       date: track.date
-    });
-    setIsModalOpen(true);
-  };
+    })
+    setIsModalOpen(true)
+  }
 
   const handleDeleteTrack = async (e: React.MouseEvent, trackId: string) => {
-    e.stopPropagation();
+    e.stopPropagation()
     if (!window.confirm('Are you sure you want to delete this track?')) {
-      return;
+      return
     }
     try {
       const response = await fetch(`http://localhost:3000/tracks/${trackId}`, {
@@ -178,73 +197,85 @@ const App = () => {
         headers: {
           'Content-Type': 'application/json'
         }
-      });
+      })
       if (response.ok) {
-        fetchTracks();
+        fetchTracks()
       } else {
-        console.error('Failed to delete track:', await response.text());
+        console.error('Failed to delete track:', await response.text())
       }
     } catch (error) {
-      console.error('Error deleting track:', error);
+      console.error('Error deleting track:', error)
     }
-  };
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     try {
-      const method = selectedTrack ? 'PUT' : 'POST';
-      const url = selectedTrack 
+      const method = selectedTrack ? 'PUT' : 'POST'
+      const url = selectedTrack
         ? `http://localhost:3000/tracks/${selectedTrack.id}`
-        : 'http://localhost:3000/tracks';
+        : 'http://localhost:3000/tracks'
 
       const body = {
         ...formData,
         id: selectedTrack?.id || nanoid()
-      };
+      }
 
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(body),
-      });
-      
+        body: JSON.stringify(body)
+      })
+
       if (response.ok) {
-        fetchTracks();
-        setIsModalOpen(false);
-        setSelectedTrack(null);
+        fetchTracks()
+        setIsModalOpen(false)
+        setSelectedTrack(null)
         setFormData({
           name: '',
           task: '',
           hours: 0,
           date: new Date().toISOString().split('T')[0]
-        });
+        })
       } else {
-        console.error('Failed to save track:', await response.text());
+        console.error('Failed to save track:', await response.text())
       }
     } catch (error) {
-      console.error('Error saving track:', error);
+      console.error('Error saving track:', error)
     }
-  };
+  }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({
       ...prev,
       [name]: name === 'hours' ? parseFloat(value) || 0 : value
-    }));
-  };
+    }))
+  }
 
   const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
-  ];
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ]
 
   const getWeekday = (day: number) => {
-    const date = new Date(selectedYear, selectedMonth, day);
-    return date.toLocaleDateString('en-US', { weekday: 'short' });
-  };
+    const date = new Date(selectedYear, selectedMonth, day)
+    return date.toLocaleDateString('en-US', { weekday: 'short' })
+  }
 
   return (
     <div className={styles.container}>
@@ -258,7 +289,9 @@ const App = () => {
           onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
         >
           {months.map((month, index) => (
-            <option key={month} value={index}>{month}</option>
+            <option key={month} value={index}>
+              {month}
+            </option>
           ))}
         </select>
         <select
@@ -266,9 +299,13 @@ const App = () => {
           value={selectedYear}
           onChange={(e) => setSelectedYear(parseInt(e.target.value))}
         >
-          {Array.from({ length: 5 }, (_, i) => selectedYear - 2 + i).map(year => (
-            <option key={year} value={year}>{year}</option>
-          ))}
+          {Array.from({ length: 5 }, (_, i) => selectedYear - 2 + i).map(
+            (year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            )
+          )}
         </select>
         <div className={styles.checkboxContainer}>
           <input
@@ -284,7 +321,53 @@ const App = () => {
         </div>
       </div>
 
-      <div className={styles.tableContainer} ref={tableContainerRef}>
+      <TracksTable
+        tableContainerRef={tableContainerRef}
+        days={getVisibleDays().map((day) => (
+          <TracksDayHeadCell
+            day={day}
+            selectedMonth={selectedMonth}
+            selectedYear={selectedYear}
+            currentDayRef={currentDayRef}
+            getWeekday={getWeekday}
+          />
+        ))}
+      >
+        {getUniqueTasks().map((task) => (
+          <TracksTaskRow
+            getTaskTotal={getTaskTotal}
+            task={task}
+            days={getVisibleDays().map((day) => (
+              <TracksCell
+                day={day}
+                task={task}
+                getDayTracks={getDayTracks}
+                handleCellClick={handleCellClick}
+                tracks={getDayTracks(day, task).map((track) => (
+                  <TableTrack
+                    key={track.id}
+                    track={track}
+                    actions={
+                      <TracksAction
+                        track={track} // 14:00
+                        handleUpdateTrack={handleUpdateTrack}
+                        handleDeleteTrack={handleDeleteTrack}
+                      />
+                    }
+                  />
+                ))}
+              />
+            ))}
+          />
+        ))}
+        <TracksSummaryRow
+          getDayTotal={getDayTotal}
+          getVisibleDays={getVisibleDays}
+          getMonthTotal={getMonthTotal}
+        />
+      </TracksTable>
+
+      {/* <div className={styles.tableContainer} ref={tableContainerRef}>
         <table className={styles.table}>
           <thead>
             <tr>
@@ -368,14 +451,17 @@ const App = () => {
             </tr>
           </tbody>
         </table>
-      </div>
+      </div> */}
 
       {isModalOpen && (
-        <div className={styles.modalOverlay} onClick={() => {
-          setIsModalOpen(false);
-          setSelectedTrack(null);
-        }}>
-          <div className={styles.modal} onClick={e => e.stopPropagation()}>
+        <div
+          className={styles.modalOverlay}
+          onClick={() => {
+            setIsModalOpen(false)
+            setSelectedTrack(null)
+          }}
+        >
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <h2>{selectedTrack ? 'Edit Track' : 'Add Track'}</h2>
             <form onSubmit={handleSubmit} className={styles.form}>
               <div className={styles.formGroup}>
@@ -389,7 +475,7 @@ const App = () => {
                   required
                 />
               </div>
-              
+
               <div className={styles.formGroup}>
                 <label htmlFor="task">Task:</label>
                 <input
@@ -401,7 +487,7 @@ const App = () => {
                   required
                 />
               </div>
-              
+
               <div className={styles.formGroup}>
                 <label htmlFor="hours">Hours:</label>
                 <input
@@ -415,7 +501,7 @@ const App = () => {
                   required
                 />
               </div>
-              
+
               <div className={styles.formGroup}>
                 <label htmlFor="date">Date:</label>
                 <input
@@ -436,8 +522,8 @@ const App = () => {
                   type="button"
                   className={styles.button}
                   onClick={() => {
-                    setIsModalOpen(false);
-                    setSelectedTrack(null);
+                    setIsModalOpen(false)
+                    setSelectedTrack(null)
                   }}
                   style={{ backgroundColor: '#6c757d' }}
                 >
@@ -449,7 +535,7 @@ const App = () => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default App;
+export default App
