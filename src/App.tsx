@@ -9,7 +9,7 @@ import { TracksSummaryRow } from './components/tracks-summary-row'
 import { TracksDayHeadCell } from './components/tracks-day-head-cell'
 import { TracksTable } from './components/tracks-table'
 
-interface Track {
+export interface Track {
   id: string
   name: string
   task: string
