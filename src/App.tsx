@@ -34,8 +34,6 @@ const App = () => {
     hours: 0,
     date: new Date().toISOString().split('T')[0]
   })
-  const tableContainerRef = useRef<HTMLDivElement>(null)
-  const currentDayRef = useRef<HTMLTableCellElement>(null)
 
   useEffect(() => {
     fetchTracks()
@@ -65,28 +63,29 @@ const App = () => {
     fetchTracks()
   }, [selectedMonth, selectedYear])
 
-  useEffect(() => {
-    const today = new Date()
-    if (
-      today.getMonth() === selectedMonth &&
-      today.getFullYear() === selectedYear &&
-      currentDayRef.current &&
-      tableContainerRef.current
-    ) {
-      const container = tableContainerRef.current
-      const cell = currentDayRef.current
-      const containerWidth = container.offsetWidth
-      const cellLeft = cell.offsetLeft
-      const cellWidth = cell.offsetWidth
+  // useEffect(() => {
+  //   const today = new Date()
+  //   if (
+  //     today.getMonth() === selectedMonth &&
+  //     today.getFullYear() === selectedYear &&
+  //     currentDayRef.current &&
+  //     tableContainerRef.current
+  //   ) {
+  //     const container = tableContainerRef.current
+  //     const cell = currentDayRef.current
+  //     const containerWidth = container.offsetWidth
+  //     const cellLeft = cell.offsetLeft
+  //     const cellWidth = cell.offsetWidth
 
-      // Center the current day in the container
-      container.scrollLeft = cellLeft - containerWidth / 2 + cellWidth / 2
-    }
-  }, [selectedMonth, selectedYear, hideWeekends])
+  //     // Center the current day in the container
+  //     container.scrollLeft = cellLeft - containerWidth / 2 + cellWidth / 2
+  //   }
+  // }, [selectedMonth, selectedYear, hideWeekends])
 
   const fetchTracks = async () => {
     try {
-      const response = await fetch('http://localhost:3000/tracks')
+      const response = await fetch('http://localhost:3001/tracks')
+      console.log(123, response)
       const data = await response.json()
       setTracks(data)
     } catch (error) {
@@ -192,7 +191,7 @@ const App = () => {
       return
     }
     try {
-      const response = await fetch(`http://localhost:3000/tracks/${trackId}`, {
+      const response = await fetch(`http://localhost:3001/tracks/${trackId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
@@ -213,8 +212,8 @@ const App = () => {
     try {
       const method = selectedTrack ? 'PUT' : 'POST'
       const url = selectedTrack
-        ? `http://localhost:3000/tracks/${selectedTrack.id}`
-        : 'http://localhost:3000/tracks'
+        ? `http://localhost:3001/tracks/${selectedTrack.id}`
+        : 'http://localhost:3001/tracks'
 
       const body = {
         ...formData,
@@ -322,16 +321,18 @@ const App = () => {
       </div>
 
       <TracksTable
-        tableContainerRef={tableContainerRef}
-        days={getVisibleDays().map((day) => (
-          <TracksDayHeadCell
-            day={day}
-            selectedMonth={selectedMonth}
-            selectedYear={selectedYear}
-            currentDayRef={currentDayRef}
-            getWeekday={getWeekday}
-          />
-        ))}
+        days={(currentDayRef) =>
+          getVisibleDays().map((day) => (
+            <TracksDayHeadCell
+              key={day}
+              day={day}
+              selectedMonth={selectedMonth}
+              selectedYear={selectedYear}
+              currentDayRef={currentDayRef}
+              getWeekday={getWeekday}
+            />
+          ))
+        }
       >
         {getUniqueTasks().map((task) => (
           <TracksTaskRow
