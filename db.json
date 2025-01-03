@@ -34,6 +34,27 @@
       "task": "Testing",
       "hours": 0,
       "date": "2024-12-31"
+    },
+    {
+      "id": "0yaj_Sx4y7VoerionlKhh",
+      "name": "ggg",
+      "task": "ggg",
+      "hours": 0.5,
+      "date": "2025-01-03"
+    },
+    {
+      "name": "перевозка",
+      "task": "поставить газель",
+      "hours": 0,
+      "date": "2025-01-04",
+      "id": "43LaqEs18ZtH2bjiS5k30"
+    },
+    {
+      "id": "4uSh82veWzieMcoJMhyLu",
+      "name": "Такелаж",
+      "task": "Поставить грузчиков на пианино",
+      "hours": 2,
+      "date": "2025-01-05"
     }
   ]
 }

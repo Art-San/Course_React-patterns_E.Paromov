@@ -321,7 +321,8 @@ const App = () => {
       </div>
 
       <TracksTable
-        days={(currentDayRef) =>
+        tasks={getUniqueTasks()}
+        renderDays={(currentDayRef) =>
           getVisibleDays().map((day) => (
             <TracksDayHeadCell
               key={day}
@@ -333,8 +334,7 @@ const App = () => {
             />
           ))
         }
-      >
-        {getUniqueTasks().map((task) => (
+        renderTask={(task) => (
           <TracksTaskRow
             getTaskTotal={getTaskTotal}
             task={task}
@@ -350,7 +350,7 @@ const App = () => {
                     track={track}
                     actions={
                       <TracksAction
-                        track={track} // 14:00
+                        track={track}
                         handleUpdateTrack={handleUpdateTrack}
                         handleDeleteTrack={handleDeleteTrack}
                       />
@@ -360,13 +360,15 @@ const App = () => {
               />
             ))}
           />
-        ))}
-        <TracksSummaryRow
-          getDayTotal={getDayTotal}
-          getVisibleDays={getVisibleDays}
-          getMonthTotal={getMonthTotal}
-        />
-      </TracksTable>
+        )}
+        summary={
+          <TracksSummaryRow
+            getDayTotal={getDayTotal}
+            getVisibleDays={getVisibleDays}
+            getMonthTotal={getMonthTotal}
+          />
+        }
+      ></TracksTable>
 
       {/* <div className={styles.tableContainer} ref={tableContainerRef}>
         <table className={styles.table}>
