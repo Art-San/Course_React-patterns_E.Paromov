@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef } from 'react'
-import { nanoid } from 'nanoid'
 import styles from './App.module.css'
 import { TracksAction } from './components/tracks-actions'
 import { TracksCell } from './components/tracks-cell'
@@ -8,6 +7,9 @@ import { TableTrack } from './components/table-track'
 import { TracksSummaryRow } from './components/tracks-summary-row'
 import { TracksDayHeadCell } from './components/tracks-day-head-cell'
 import { TracksTable } from './components/tracks-table'
+import { useTracks } from './hooks/use-tracks'
+import { useTracksFilter } from './hooks/use-tracks-filter'
+import { TracksFilters } from './components/tracks-filters'
 
 export interface Track {
   id: string
@@ -18,10 +20,18 @@ export interface Track {
 }
 
 const App = () => {
-  const [tracks, setTracks] = useState<Track[]>([])
-  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth())
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
-  const [hideWeekends, setHideWeekends] = useState(false)
+  const { tracks, trackDelete, trackUpdate, trackCreate } = useTracks()
+  const { filteredTracks, filters, setFilters, visibleDays } = useTracksFilter({
+    tracks
+  })
+
+  const { selectedMonth, selectedYear, hideWeekends } = filters
+
+  // const [tracks, setTracks] = useState<Track[]>([])
+  // const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth())
+  // const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
+  // const [hideWeekends, setHideWeekends] = useState(false)
+
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedCell, setSelectedCell] = useState<{
     day: number
@@ -35,9 +45,9 @@ const App = () => {
     date: new Date().toISOString().split('T')[0]
   })
 
-  useEffect(() => {
-    fetchTracks()
-  }, [selectedMonth, selectedYear])
+  // useEffect(() => {
+  //   fetchTracks()
+  // }, [selectedMonth, selectedYear])
 
   useEffect(() => {
     if (selectedCell) {
@@ -59,20 +69,20 @@ const App = () => {
     }
   }, [selectedCell, selectedMonth, selectedYear])
 
-  useEffect(() => {
-    fetchTracks()
-  }, [selectedMonth, selectedYear])
+  // useEffect(() => {
+  //   fetchTracks()
+  // }, [selectedMonth, selectedYear])
 
-  const fetchTracks = async () => {
-    try {
-      const response = await fetch('http://localhost:3001/tracks')
-      console.log(123, response)
-      const data = await response.json()
-      setTracks(data)
-    } catch (error) {
-      console.error('Error fetching tracks:', error)
-    }
-  }
+  // const fetchTracks = async () => {
+  //   try {
+  //     const response = await fetch('http://localhost:3001/tracks')
+  //     console.log(123, response)
+  //     const data = await response.json()
+  //     setTracks(data)
+  //   } catch (error) {
+  //     console.error('Error fetching tracks:', error)
+  //   }
+  // }
 
   const getUniqueTasks = () => {
     const monthTracks = tracks.filter((track) => {
@@ -85,19 +95,19 @@ const App = () => {
     return [...new Set(monthTracks.map((track) => track.task))]
   }
 
-  const getDaysInMonth = () => {
-    return new Date(selectedYear, selectedMonth + 1, 0).getDate()
-  }
+  // const getDaysInMonth = () => {
+  //   return new Date(selectedYear, selectedMonth + 1, 0).getDate()
+  // }
 
-  const getVisibleDays = () => {
-    const days = Array.from({ length: getDaysInMonth() }, (_, i) => i + 1)
-    return hideWeekends ? days.filter((day) => !isWeekend(day)) : days
-  }
+  // const getVisibleDays = () => {
+  //   const days = Array.from({ length: getDaysInMonth() }, (_, i) => i + 1)
+  //   return hideWeekends ? days.filter((day) => !isWeekend(day)) : days
+  // }
 
-  const isWeekend = (day: number) => {
-    const date = new Date(selectedYear, selectedMonth, day)
-    return date.getDay() === 0 || date.getDay() === 6
-  }
+  // const isWeekend = (day: number) => {
+  //   const date = new Date(selectedYear, selectedMonth, day)
+  //   return date.getDay() === 0 || date.getDay() === 6
+  // }
 
   const getDayTracks = (day: number, task: string) => {
     return tracks.filter((track) => {
@@ -168,62 +178,27 @@ const App = () => {
 
   const handleDeleteTrack = async (e: React.MouseEvent, trackId: string) => {
     e.stopPropagation()
-    if (!window.confirm('Are you sure you want to delete this track?')) {
-      return
-    }
-    try {
-      const response = await fetch(`http://localhost:3001/tracks/${trackId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      if (response.ok) {
-        fetchTracks()
-      } else {
-        console.error('Failed to delete track:', await response.text())
-      }
-    } catch (error) {
-      console.error('Error deleting track:', error)
-    }
+    trackDelete(trackId)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    try {
-      const method = selectedTrack ? 'PUT' : 'POST'
-      const url = selectedTrack
-        ? `http://localhost:3001/tracks/${selectedTrack.id}`
-        : 'http://localhost:3001/tracks'
 
-      const body = {
-        ...formData,
-        id: selectedTrack?.id || nanoid()
-      }
-
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(body)
+    if (selectedCell && selectedTrack) {
+      trackUpdate({
+        ...selectedTrack,
+        name: formData.name,
+        task: formData.task,
+        hours: formData.hours,
+        date: formData.date
       })
-
-      if (response.ok) {
-        fetchTracks()
-        setIsModalOpen(false)
-        setSelectedTrack(null)
-        setFormData({
-          name: '',
-          task: '',
-          hours: 0,
-          date: new Date().toISOString().split('T')[0]
-        })
-      } else {
-        console.error('Failed to save track:', await response.text())
-      }
-    } catch (error) {
-      console.error('Error saving track:', error)
+    } else {
+      trackCreate({
+        name: formData.name,
+        task: formData.task,
+        hours: formData.hours,
+        date: formData.date
+      })
     }
   }
 
@@ -237,20 +212,20 @@ const App = () => {
     }))
   }
 
-  const months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December'
-  ]
+  // const months = [
+  //   'January',
+  //   'February',
+  //   'March',
+  //   'April',
+  //   'May',
+  //   'June',
+  //   'July',
+  //   'August',
+  //   'September',
+  //   'October',
+  //   'November',
+  //   'December'
+  // ]
 
   const getWeekday = (day: number) => {
     const date = new Date(selectedYear, selectedMonth, day)
@@ -259,7 +234,20 @@ const App = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
+      <TracksFilters
+        {...filters}
+        {...setFilters}
+        actions={
+          <button
+            className={styles.button}
+            onClick={() => setIsModalOpen(true)}
+          >
+            Add Track
+          </button>
+        }
+      />
+
+      {/* <div className={styles.header}>
         <button className={styles.button} onClick={() => setIsModalOpen(true)}>
           Add Track
         </button>
@@ -299,7 +287,7 @@ const App = () => {
             Hide Weekends
           </label>
         </div>
-      </div>
+      </div> */}
 
       <TracksTable
         tasks={getUniqueTasks()}
