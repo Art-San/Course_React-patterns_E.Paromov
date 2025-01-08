@@ -10,6 +10,9 @@ import { TracksTable } from './components/tracks-table'
 import { useTracks } from './hooks/use-tracks'
 import { useTracksFilter } from './hooks/use-tracks-filter'
 import { TracksFilters } from './components/tracks-filters'
+import { useTasks } from './hooks/use-tasks'
+import { useTableComputing } from './hooks/use-table-comuting'
+import { useTrackForm } from './hooks/use-track-form'
 
 export interface Track {
   id: string
@@ -24,13 +27,12 @@ const App = () => {
   const { filteredTracks, filters, setFilters, visibleDays } = useTracksFilter({
     tracks
   })
+  const { selectedMonth, selectedYear } = filters
 
-  const { selectedMonth, selectedYear, hideWeekends } = filters
+  const { uniqueTasks } = useTasks({ tracks: filteredTracks })
 
-  // const [tracks, setTracks] = useState<Track[]>([])
-  // const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth())
-  // const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
-  // const [hideWeekends, setHideWeekends] = useState(false)
+  const { getDayTracks, getDayTotal, getTaskTotal, getTotal } =
+    useTableComputing({ tracks: filteredTracks })
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedCell, setSelectedCell] = useState<{
@@ -38,36 +40,51 @@ const App = () => {
     task: string
   } | null>(null)
   const [selectedTrack, setSelectedTrack] = useState<Track | null>(null)
-  const [formData, setFormData] = useState({
-    name: '',
-    task: '',
-    hours: 0,
-    date: new Date().toISOString().split('T')[0]
+
+  const { formData, handleInputChange, handleSubmit } = useTrackForm({
+    selectedCell,
+    selectedMonth,
+    selectedYear,
+    selectedTrack,
+    trackUpdate,
+    trackCreate
   })
+
+  // const [tracks, setTracks] = useState<Track[]>([])
+  // const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth())
+  // const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
+  // const [hideWeekends, setHideWeekends] = useState(false)
+
+  // const [formData, setFormData] = useState({
+  //   name: '',
+  //   task: '',
+  //   hours: 0,
+  //   date: new Date().toISOString().split('T')[0]
+  // })
 
   // useEffect(() => {
   //   fetchTracks()
   // }, [selectedMonth, selectedYear])
 
-  useEffect(() => {
-    if (selectedCell) {
-      setFormData((prev) => ({
-        ...prev,
-        task: selectedCell.task,
-        date: `${selectedYear}-${String(selectedMonth + 1).padStart(
-          2,
-          '0'
-        )}-${String(selectedCell.day).padStart(2, '0')}`
-      }))
-    } else {
-      setFormData({
-        name: '',
-        task: '',
-        hours: 0,
-        date: new Date().toISOString().split('T')[0]
-      })
-    }
-  }, [selectedCell, selectedMonth, selectedYear])
+  // useEffect(() => {
+  //   if (selectedCell) {
+  //     setFormData((prev) => ({
+  //       ...prev,
+  //       task: selectedCell.task,
+  //       date: `${selectedYear}-${String(selectedMonth + 1).padStart(
+  //         2,
+  //         '0'
+  //       )}-${String(selectedCell.day).padStart(2, '0')}`
+  //     }))
+  //   } else {
+  //     setFormData({
+  //       name: '',
+  //       task: '',
+  //       hours: 0,
+  //       date: new Date().toISOString().split('T')[0]
+  //     })
+  //   }
+  // }, [selectedCell, selectedMonth, selectedYear])
 
   // useEffect(() => {
   //   fetchTracks()
@@ -84,16 +101,16 @@ const App = () => {
   //   }
   // }
 
-  const getUniqueTasks = () => {
-    const monthTracks = tracks.filter((track) => {
-      const trackDate = new Date(track.date)
-      return (
-        trackDate.getMonth() === selectedMonth &&
-        trackDate.getFullYear() === selectedYear
-      )
-    })
-    return [...new Set(monthTracks.map((track) => track.task))]
-  }
+  // const getUniqueTasks = () => {
+  //   const monthTracks = tracks.filter((track) => {
+  //     const trackDate = new Date(track.date)
+  //     return (
+  //       trackDate.getMonth() === selectedMonth &&
+  //       trackDate.getFullYear() === selectedYear
+  //     )
+  //   })
+  //   return [...new Set(monthTracks.map((track) => track.task))]
+  // }
 
   // const getDaysInMonth = () => {
   //   return new Date(selectedYear, selectedMonth + 1, 0).getDate()
@@ -109,108 +126,104 @@ const App = () => {
   //   return date.getDay() === 0 || date.getDay() === 6
   // }
 
-  const getDayTracks = (day: number, task: string) => {
-    return tracks.filter((track) => {
-      const trackDate = new Date(track.date)
-      return (
-        trackDate.getDate() === day &&
-        trackDate.getMonth() === selectedMonth &&
-        trackDate.getFullYear() === selectedYear &&
-        track.task === task
-      )
-    })
-  }
+  // const getDayTracks = (day: number, task: string) => {
+  //   return tracks.filter((track) => {
+  //     const trackDate = new Date(track.date)
+  //     return (
+  //       trackDate.getDate() === day &&
+  //       trackDate.getMonth() === selectedMonth &&
+  //       trackDate.getFullYear() === selectedYear &&
+  //       track.task === task
+  //     )
+  //   })
+  // }
 
-  const getDayTotal = (day: number) => {
-    return tracks
-      .filter((track) => {
-        const trackDate = new Date(track.date)
-        return (
-          trackDate.getDate() === day &&
-          trackDate.getMonth() === selectedMonth &&
-          trackDate.getFullYear() === selectedYear
-        )
-      })
-      .reduce((sum, track) => sum + track.hours, 0)
-  }
+  // const getDayTotal = (day: number) => {
+  //   return tracks
+  //     .filter((track) => {
+  //       const trackDate = new Date(track.date)
+  //       return (
+  //         trackDate.getDate() === day &&
+  //         trackDate.getMonth() === selectedMonth &&
+  //         trackDate.getFullYear() === selectedYear
+  //       )
+  //     })
+  //     .reduce((sum, track) => sum + track.hours, 0)
+  // }
 
-  const getTaskTotal = (task: string) => {
-    return tracks
-      .filter((track) => {
-        const trackDate = new Date(track.date)
-        return (
-          trackDate.getMonth() === selectedMonth &&
-          trackDate.getFullYear() === selectedYear &&
-          track.task === task
-        )
-      })
-      .reduce((sum, track) => sum + track.hours, 0)
-  }
+  // const getTaskTotal = (task: string) => {
+  //   return tracks
+  //     .filter((track) => {
+  //       const trackDate = new Date(track.date)
+  //       return (
+  //         trackDate.getMonth() === selectedMonth &&
+  //         trackDate.getFullYear() === selectedYear &&
+  //         track.task === task
+  //       )
+  //     })
+  //     .reduce((sum, track) => sum + track.hours, 0)
+  // }
 
-  const getMonthTotal = () => {
-    return tracks
-      .filter((track) => {
-        const trackDate = new Date(track.date)
-        return (
-          trackDate.getMonth() === selectedMonth &&
-          trackDate.getFullYear() === selectedYear
-        )
-      })
-      .reduce((sum, track) => sum + track.hours, 0)
-  }
+  // const getMonthTotal = () => {
+  //   return tracks
+  //     .filter((track) => {
+  //       const trackDate = new Date(track.date)
+  //       return (
+  //         trackDate.getMonth() === selectedMonth &&
+  //         trackDate.getFullYear() === selectedYear
+  //       )
+  //     })
+  //     .reduce((sum, track) => sum + track.hours, 0)
+  // }
 
   const handleCellClick = (day: number, task: string) => {
     setSelectedCell({ day, task })
     setIsModalOpen(true)
   }
 
-  const handleUpdateTrack = (e: React.MouseEvent, track: Track) => {
-    e.stopPropagation()
-    setSelectedTrack(track)
-    setFormData({
-      name: track.name,
-      task: track.task,
-      hours: track.hours,
-      date: track.date
-    })
-    setIsModalOpen(true)
-  }
+  // .. удалили
+  // const handleUpdateTrack = (e: React.MouseEvent, track: Track) => {
+  //   e.stopPropagation()
+  //   setSelectedTrack(track)
 
-  const handleDeleteTrack = async (e: React.MouseEvent, trackId: string) => {
-    e.stopPropagation()
-    trackDelete(trackId)
-  }
+  //   setIsModalOpen(true)
+  // }
+  // .. удалили
+  // const handleDeleteTrack = async (e: React.MouseEvent, trackId: string) => {
+  //   e.stopPropagation()
+  //   trackDelete(trackId)
+  // }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault()
 
-    if (selectedCell && selectedTrack) {
-      trackUpdate({
-        ...selectedTrack,
-        name: formData.name,
-        task: formData.task,
-        hours: formData.hours,
-        date: formData.date
-      })
-    } else {
-      trackCreate({
-        name: formData.name,
-        task: formData.task,
-        hours: formData.hours,
-        date: formData.date
-      })
-    }
-  }
+  //   if (selectedCell && selectedTrack) {
+  //     trackUpdate({
+  //       ...selectedTrack,
+  //       name: formData.name,
+  //       task: formData.task,
+  //       hours: formData.hours,
+  //       date: formData.date
+  //     })
+  //   } else {
+  //     trackCreate({
+  //       name: formData.name,
+  //       task: formData.task,
+  //       hours: formData.hours,
+  //       date: formData.date
+  //     })
+  //   }
+  // }
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === 'hours' ? parseFloat(value) || 0 : value
-    }))
-  }
+  // const handleInputChange = (
+  //   e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  // ) => {
+  //   const { name, value } = e.target
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     [name]: name === 'hours' ? parseFloat(value) || 0 : value
+  //   }))
+  // }
 
   // const months = [
   //   'January',
@@ -227,10 +240,10 @@ const App = () => {
   //   'December'
   // ]
 
-  const getWeekday = (day: number) => {
-    const date = new Date(selectedYear, selectedMonth, day)
-    return date.toLocaleDateString('en-US', { weekday: 'short' })
-  }
+  // const getWeekday = (day: number) => {
+  //   const date = new Date(selectedYear, selectedMonth, day)
+  //   return date.toLocaleDateString('en-US', { weekday: 'short' })
+  // }
 
   return (
     <div className={styles.container}>
@@ -290,16 +303,15 @@ const App = () => {
       </div> */}
 
       <TracksTable
-        tasks={getUniqueTasks()}
+        tasks={uniqueTasks}
         renderDays={(currentDayRef) =>
-          getVisibleDays().map((day) => (
+          visibleDays.map((day) => (
             <TracksDayHeadCell
               key={day}
               day={day}
               selectedMonth={selectedMonth}
               selectedYear={selectedYear}
               currentDayRef={currentDayRef}
-              getWeekday={getWeekday}
             />
           ))
         }
@@ -307,7 +319,7 @@ const App = () => {
           <TracksTaskRow
             getTaskTotal={getTaskTotal}
             task={task}
-            days={getVisibleDays().map((day) => (
+            days={visibleDays.map((day) => (
               <TracksCell
                 day={day}
                 task={task}
@@ -320,8 +332,8 @@ const App = () => {
                     actions={
                       <TracksAction
                         track={track}
-                        handleUpdateTrack={handleUpdateTrack}
-                        handleDeleteTrack={handleDeleteTrack}
+                        onUpdateTrack={setSelectedTrack}
+                        onDeleteTrack={trackDelete}
                       />
                     }
                   />
@@ -333,8 +345,8 @@ const App = () => {
         summary={
           <TracksSummaryRow
             getDayTotal={getDayTotal}
-            getVisibleDays={getVisibleDays}
-            getMonthTotal={getMonthTotal}
+            visibleDays={visibleDays}
+            getMonthTotal={getTotal}
           />
         }
       ></TracksTable>

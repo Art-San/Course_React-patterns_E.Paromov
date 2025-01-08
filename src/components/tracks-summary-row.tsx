@@ -1,18 +1,18 @@
 export function TracksSummaryRow({
-  getVisibleDays,
+  visibleDays,
   getDayTotal,
   getMonthTotal
 }: {
   // getTaskTotal: (task: string) => number
   // days: React.ReactNode
   getMonthTotal: () => number
-  getVisibleDays: () => number[]
+  visibleDays: number[]
   getDayTotal: (day: number) => number
 }) {
   return (
     <tr>
       <td>Total</td>
-      {getVisibleDays().map((day) => (
+      {visibleDays.map((day) => (
         <td key={`total-${day}`}>{getDayTotal(day)}</td>
       ))}
       <td>{getMonthTotal()}</td>
