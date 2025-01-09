@@ -13,6 +13,7 @@ import { TracksFilters } from './components/tracks-filters'
 import { useTasks } from './hooks/use-tasks'
 import { useTableComputing } from './hooks/use-table-comuting'
 import { useTrackForm } from './hooks/use-track-form'
+import { useTrackModal } from './hooks/use-track-modal'
 
 export interface Track {
   id: string
@@ -27,24 +28,30 @@ const App = () => {
   const { filteredTracks, filters, setFilters, visibleDays } = useTracksFilter({
     tracks
   })
-  const { selectedMonth, selectedYear } = filters
+  // const { selectedMonth, selectedYear } = filters
 
   const { uniqueTasks } = useTasks({ tracks: filteredTracks })
 
   const { getDayTracks, getDayTotal, getTaskTotal, getTotal } =
     useTableComputing({ tracks: filteredTracks })
 
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedCell, setSelectedCell] = useState<{
-    day: number
-    task: string
-  } | null>(null)
-  const [selectedTrack, setSelectedTrack] = useState<Track | null>(null)
+  // const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const {
+    isOpenModal,
+    selectedCell,
+    selectedTrack,
+    cellClick,
+    trackClick,
+    close,
+    createClick
+  } = useTrackModal()
 
   const { formData, handleInputChange, handleSubmit } = useTrackForm({
+    // selectedMonth,
+    // selectedYear,
+    ...filters,
     selectedCell,
-    selectedMonth,
-    selectedYear,
     selectedTrack,
     trackUpdate,
     trackCreate
@@ -176,10 +183,10 @@ const App = () => {
   //     .reduce((sum, track) => sum + track.hours, 0)
   // }
 
-  const handleCellClick = (day: number, task: string) => {
-    setSelectedCell({ day, task })
-    setIsModalOpen(true)
-  }
+  // const handleCellClick = (day: number, task: string) => {
+  //   console.log({ day, task })
+  //   setSelectedCell({ day, task })
+  // }
 
   // .. удалили
   // const handleUpdateTrack = (e: React.MouseEvent, track: Track) => {
@@ -251,10 +258,7 @@ const App = () => {
         {...filters}
         {...setFilters}
         actions={
-          <button
-            className={styles.button}
-            onClick={() => setIsModalOpen(true)}
-          >
+          <button className={styles.button} onClick={() => createClick()}>
             Add Track
           </button>
         }
@@ -309,8 +313,9 @@ const App = () => {
             <TracksDayHeadCell
               key={day}
               day={day}
-              selectedMonth={selectedMonth}
-              selectedYear={selectedYear}
+              {...filters}
+              // selectedMonth={filters.selectedMonth}
+              // selectedYear={filters.selectedYear}
               currentDayRef={currentDayRef}
             />
           ))
@@ -324,7 +329,7 @@ const App = () => {
                 day={day}
                 task={task}
                 getDayTracks={getDayTracks}
-                handleCellClick={handleCellClick}
+                onCellClick={cellClick}
                 tracks={getDayTracks(day, task).map((track) => (
                   <TableTrack
                     key={track.id}
@@ -332,7 +337,7 @@ const App = () => {
                     actions={
                       <TracksAction
                         track={track}
-                        onUpdateTrack={setSelectedTrack}
+                        onUpdateTrack={trackClick}
                         onDeleteTrack={trackDelete}
                       />
                     }
@@ -351,14 +356,8 @@ const App = () => {
         }
       ></TracksTable>
 
-      {isModalOpen && (
-        <div
-          className={styles.modalOverlay}
-          onClick={() => {
-            setIsModalOpen(false)
-            setSelectedTrack(null)
-          }}
-        >
+      {isOpenModal && (
+        <div className={styles.modalOverlay} onClick={() => close()}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <h2>{selectedTrack ? 'Edit Track' : 'Add Track'}</h2>
             <form onSubmit={handleSubmit} className={styles.form}>
@@ -419,10 +418,7 @@ const App = () => {
                 <button
                   type="button"
                   className={styles.button}
-                  onClick={() => {
-                    setIsModalOpen(false)
-                    setSelectedTrack(null)
-                  }}
+                  onClick={() => close()}
                   style={{ backgroundColor: '#6c757d' }}
                 >
                   Cancel

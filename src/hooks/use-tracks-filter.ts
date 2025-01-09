@@ -24,8 +24,8 @@ export function useTracksFilter({ tracks }: { tracks: Track[] }) {
     const trackDate = new Date(track.date)
     return (
       trackDate.getMonth() === selectedMonth &&
-      trackDate.getFullYear() === selectedYear
-      // (!hideWeekends || !isWeekend(trackDate.getDate()))
+      trackDate.getFullYear() === selectedYear &&
+      (!hideWeekends || !isWeekend(trackDate.getDate()))
     )
   })
 

@@ -6,20 +6,20 @@ export function TracksCell({
   getDayTracks,
   day,
   task,
-  handleCellClick,
+  onCellClick,
   tracks
 }: {
   getDayTracks: (day: number, task: string) => Track[]
   day: number
   task: string
-  handleCellClick: (day: number, task: string) => void
+  onCellClick: (day: number, task: string) => void
   tracks: React.ReactNode
 }) {
   return (
     <td
       key={`${day}-${task}`}
       className={styles.cell}
-      onClick={() => handleCellClick(day, task)}
+      onClick={() => onCellClick(day, task)}
     >
       {(() => {
         const dayTracks = getDayTracks(day, task)
