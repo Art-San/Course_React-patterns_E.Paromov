@@ -11,8 +11,9 @@ import { useTracksFilter } from './hooks/use-tracks-filter'
 import { TracksFilters } from './components/tracks-filters'
 import { useTasks } from './hooks/use-tasks'
 import { useTableComputing } from './hooks/use-table-comuting'
-import { useTrackForm } from './hooks/use-track-form'
-import { useTrackModal } from './hooks/use-track-modal'
+import { TrackModal } from './tracks-modal/components/track-modal'
+import { useTrackModalOpen } from './tracks-modal/hooks/use-tracks-modal-open'
+import { TrackModalProvider } from './tracks-modal/components/track-modal-context'
 
 export interface Track {
   id: string
@@ -22,7 +23,7 @@ export interface Track {
   date: string
 }
 
-const App = () => {
+const AppContent = () => {
   const { tracks, trackDelete, trackUpdate, trackCreate } = useTracks()
   const { filteredTracks, filters, setFilters, visibleDays } = useTracksFilter({
     tracks
@@ -34,27 +35,27 @@ const App = () => {
   const { getDayTracks, getDayTotal, getTaskTotal, getTotal } =
     useTableComputing({ tracks: filteredTracks })
 
-  // const [isModalOpen, setIsModalOpen] = useState(false)
+  const { createClick, cellClick, trackClick } = useTrackModalOpen()
 
-  const {
-    isOpenModal,
-    selectedCell,
-    selectedTrack,
-    cellClick,
-    trackClick,
-    close,
-    createClick
-  } = useTrackModal()
+  // const {
+  //   isOpenModal,
+  //   selectedCell,
+  //   selectedTrack,
+  //   cellClick,
+  //   trackClick,
+  //   close,
+  //   createClick
+  // } = useTrackModal()
 
-  const { formData, handleInputChange, handleSubmit } = useTrackForm({
-    // selectedMonth,
-    // selectedYear,
-    ...filters,
-    selectedCell,
-    selectedTrack,
-    trackUpdate,
-    trackCreate
-  })
+  // const { formData, handleInputChange, handleSubmit } = useTrackForm({
+  //   // selectedMonth,
+  //   // selectedYear,
+  //   ...filters,
+  //   selectedCell,
+  //   selectedTrack,
+  //   trackUpdate,
+  //   trackCreate
+  // })
 
   return (
     <div className={styles.container}>
@@ -118,7 +119,13 @@ const App = () => {
         }
       ></TracksTable>
 
-      {isOpenModal && (
+      <TrackModal
+        selectedMonth={filters.selectedMonth}
+        selectedYear={filters.selectedYear}
+        trackCreate={trackCreate}
+        trackUpdate={trackUpdate}
+      />
+      {/* {isOpenModal && (
         <div className={styles.modalOverlay} onClick={() => close()}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <h2>{selectedTrack ? 'Edit Track' : 'Add Track'}</h2>
@@ -189,9 +196,15 @@ const App = () => {
             </form>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   )
 }
 
-export default App
+export default function App() {
+  return (
+    <TrackModalProvider>
+      <AppContent />
+    </TrackModalProvider>
+  )
+}
