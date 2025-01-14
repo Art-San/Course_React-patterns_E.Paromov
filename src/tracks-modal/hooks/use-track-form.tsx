@@ -84,9 +84,12 @@ export function useTrackForm({
     }
   }
 
+  const isEdit = selectedTrack !== null
+
   return {
     formData,
     handleInputChange,
-    handleSubmit
+    handleSubmit,
+    isEdit
   }
 }

@@ -22,7 +22,7 @@
   z-index: 1001;
 }
 
-.form {
+/* .form {
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -69,4 +69,4 @@
 
 .button + .button {
   margin-left: 10px;
-}
+} */
