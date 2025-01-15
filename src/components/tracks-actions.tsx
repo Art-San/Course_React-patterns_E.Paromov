@@ -1,4 +1,3 @@
-import React from 'react'
 import styles from './tracks-actions.module.css'
 import { Track } from '../App'
 

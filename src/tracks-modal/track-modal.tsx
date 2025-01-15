@@ -1,9 +1,8 @@
-import { useContext } from 'react'
 import { Track } from '../App'
 import { TrackModalView } from './components/track-modal'
 import { useTrackForm } from './hooks/use-track-form'
 import { TrackForm } from './components/track-form'
-import { trackModalContext } from './components/track-modal-context'
+import { useTrackModalContext } from './components/track-modal-context'
 
 export function TrackModal({
   trackUpdate,
@@ -16,12 +15,13 @@ export function TrackModal({
   selectedMonth: number
   selectedYear: number
 }) {
-  const context = useContext(trackModalContext)
-  if (!context) {
-    throw new Error('useTrackModal must be used within a TrackModalProvider')
-  }
+  // const context = useContext(trackModalContext)
+  // if (!context) {
+  //   throw new Error('useTrackModal must be used within a TrackModalProvider')
+  // }
 
-  const { close, isOpenModal, selectedCell, selectedTrack } = context
+  const { close, isOpenModal, selectedCell, selectedTrack } =
+    useTrackModalContext()
 
   const { formData, handleInputChange, handleSubmit, isEdit } = useTrackForm({
     selectedMonth,
