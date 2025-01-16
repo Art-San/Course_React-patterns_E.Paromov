@@ -97,6 +97,27 @@
       "task": "Проверка способности",
       "hours": 1,
       "date": "2025-01-06"
+    },
+    {
+      "id": "8J9Iyn245a_N2lnZLV02f",
+      "name": "16",
+      "task": "вынести мусор",
+      "hours": 0,
+      "date": "2025-01-16"
+    },
+    {
+      "id": "ZDm6Y6EC8ptBEZvZYbljP",
+      "name": "16",
+      "task": "вынести мусор",
+      "hours": 0,
+      "date": "2025-01-16"
+    },
+    {
+      "id": "XuIUiIChebfmomhaKs7oU",
+      "name": "16",
+      "task": "вынести мусор",
+      "hours": 0,
+      "date": "2025-01-16"
     }
   ]
 }
