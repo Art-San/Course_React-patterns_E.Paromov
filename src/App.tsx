@@ -72,7 +72,7 @@ const App = () => {
       const cellLeft = cell.offsetLeft
       const cellWidth = cell.offsetWidth
 
-      // Center the current day in the container
+      // Центрировать текущий день в контейнере
       container.scrollLeft = cellLeft - containerWidth / 2 + cellWidth / 2
     }
   }, [selectedMonth, selectedYear, hideWeekends])
