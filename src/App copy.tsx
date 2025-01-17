@@ -16,23 +16,17 @@ const App = () => {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
   const [hideWeekends, setHideWeekends] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
-
   const [selectedCell, setSelectedCell] = useState<{
     day: number
     task: string
   } | null>(null)
-
-  // console.log(12, selectedCell)
   const [selectedTrack, setSelectedTrack] = useState<Track | null>(null)
-  console.log(13, selectedTrack)
-
   const [formData, setFormData] = useState({
     name: '',
     task: '',
     hours: 0,
     date: new Date().toISOString().split('T')[0]
   })
-
   const tableContainerRef = useRef<HTMLDivElement>(null)
   const currentDayRef = useRef<HTMLTableCellElement>(null)
 
@@ -60,9 +54,9 @@ const App = () => {
     }
   }, [selectedCell, selectedMonth, selectedYear])
 
-  // useEffect(() => {
-  //   fetchTracks()
-  // }, [selectedMonth, selectedYear])
+  useEffect(() => {
+    fetchTracks()
+  }, [selectedMonth, selectedYear])
 
   useEffect(() => {
     const today = new Date()
@@ -101,18 +95,15 @@ const App = () => {
         trackDate.getFullYear() === selectedYear
       )
     })
-    console.log(13)
     return [...new Set(monthTracks.map((track) => track.task))]
   }
 
   const getDaysInMonth = () => {
-    const res = new Date(selectedYear, selectedMonth + 1, 0).getDate()
-    return res
+    return new Date(selectedYear, selectedMonth + 1, 0).getDate()
   }
 
   const getVisibleDays = () => {
     const days = Array.from({ length: getDaysInMonth() }, (_, i) => i + 1)
-
     return hideWeekends ? days.filter((day) => !isWeekend(day)) : days
   }
 
@@ -134,7 +125,7 @@ const App = () => {
   }
 
   const getDayTotal = (day: number) => {
-    const res = tracks
+    return tracks
       .filter((track) => {
         const trackDate = new Date(track.date)
         return (
@@ -144,8 +135,6 @@ const App = () => {
         )
       })
       .reduce((sum, track) => sum + track.hours, 0)
-
-    return res
   }
 
   const getTaskTotal = (task: string) => {
@@ -255,8 +244,6 @@ const App = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target
-    console.log(2, name)
-    console.log(2, value)
     setFormData((prev) => ({
       ...prev,
       [name]: name === 'hours' ? parseFloat(value) || 0 : value
@@ -285,7 +272,7 @@ const App = () => {
 
   return (
     <div className={styles.container}>
-      {/* <div className={styles.header}>
+      <div className={styles.header}>
         <button className={styles.button} onClick={() => setIsModalOpen(true)}>
           Add Track
         </button>
@@ -325,11 +312,11 @@ const App = () => {
             Hide Weekends
           </label>
         </div>
-      </div> */}
+      </div>
 
       <div className={styles.tableContainer} ref={tableContainerRef}>
         <table className={styles.table}>
-          {/* <thead>
+          <thead>
             <tr>
               <th>Task</th>
               {getVisibleDays().map((day) => {
@@ -337,7 +324,6 @@ const App = () => {
                   new Date().getDate() === day &&
                   new Date().getMonth() === selectedMonth &&
                   new Date().getFullYear() === selectedYear
-
                 return (
                   <th
                     key={day}
@@ -353,7 +339,7 @@ const App = () => {
               })}
               <th>Total</th>
             </tr>
-          </thead> */}
+          </thead>
           <tbody>
             {getUniqueTasks().map((task) => (
               <tr key={task}>
@@ -409,13 +395,13 @@ const App = () => {
                 <td>{getTaskTotal(task)}</td>
               </tr>
             ))}
-            {/* <tr>
+            <tr>
               <td>Total</td>
               {getVisibleDays().map((day) => (
                 <td key={`total-${day}`}>{getDayTotal(day)}</td>
               ))}
               <td>{getMonthTotal()}</td>
-            </tr> */}
+            </tr>
           </tbody>
         </table>
       </div>
