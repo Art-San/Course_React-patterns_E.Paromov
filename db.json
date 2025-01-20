@@ -50,9 +50,23 @@
       "date": "2025-01-04"
     },
     {
-      "id": "wEJfm_r4YgSB06O0mVRzA",
       "name": "Грузчики",
       "task": "Квартирный переез",
+      "hours": 1,
+      "date": "2025-01-05",
+      "id": "wEJfm_r4YgSB06O0mVRzA"
+    },
+    {
+      "id": "e05293230V6nPR-ot1kI6",
+      "name": "задача",
+      "task": " переезl",
+      "hours": 2,
+      "date": "2025-01-06"
+    },
+    {
+      "id": "1aey2eZp0CXQQlKfxMoId",
+      "name": "Грузчики",
+      "task": "Поставить газел",
       "hours": 1,
       "date": "2025-01-05"
     }
