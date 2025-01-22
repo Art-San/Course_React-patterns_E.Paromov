@@ -83,6 +83,7 @@ export function useTracks() {
         body: JSON.stringify(body)
       })
 
+      console.log(123, response.json())
       if (response.ok) {
         fetchTracks()
       } else {

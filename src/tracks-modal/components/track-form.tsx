@@ -6,13 +6,13 @@ export function TrackForm({
   onInputChange,
   onSubmit,
   onCancel,
-  isEdit
+  submitText = 'Add Track'
 }: {
   formData: Omit<Track, 'id'>
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
   onCancel: () => void
-  isEdit: boolean
+  submitText: string
 }) {
   return (
     <form onSubmit={onSubmit} className={styles.form}>
@@ -68,7 +68,7 @@ export function TrackForm({
 
       <div className={styles.buttonGroup}>
         <button type="submit" className={styles.button}>
-          {isEdit ? 'Update' : 'Add'} Track
+          {submitText}
         </button>
 
         <button

@@ -1,40 +1,31 @@
 import { Track } from '../App'
 import { TrackModalView } from './components/track-modal'
-import { useTrackForm } from './hooks/use-track-form'
 import { TrackForm } from './components/track-form'
 import { useTrackModalContext } from './components/track-modal-context'
+import { useAddTrackForm } from './hooks/use-add-track-form'
 
-export function TrackModal({
-  trackCreate,
-  selectedMonth,
-  selectedYear
+export function AddTrackModal({
+  trackCreate
 }: {
-  trackCreate: (track: Omit<Track, 'id'>) => void
-
-  selectedMonth: number
-  selectedYear: number
+  trackCreate: (track: Omit<Track, 'id'>) => Promise<void>
 }) {
   const { close, isOpenModal } = useTrackModalContext()
 
-  const { formData, handleInputChange, handleSubmit, isEdit } = useTrackForm({
-    selectedMonth,
-    selectedYear,
-    selectedCell,
-    selectedTrack,
-    trackUpdate,
-    trackCreate
+  const { formData, handleInputChange, handleSubmit } = useAddTrackForm({
+    trackCreate,
+    onSubmit: close
   })
 
   if (!isOpenModal) return null
 
   return (
-    <TrackModalView isEdit={isEdit} close={close}>
+    <TrackModalView title={'Add Track'} close={close}>
       <TrackForm
         formData={formData}
         onInputChange={handleInputChange}
         onSubmit={handleSubmit}
         onCancel={close}
-        isEdit={isEdit}
+        submitText="Add Track"
       />
     </TrackModalView>
   )

@@ -10,11 +10,11 @@ import { useTracksFilter } from './hooks/use-tracks-filter'
 import { TracksFilters } from './components/tracks-filters'
 import { useTasks } from './hooks/use-tasks'
 import { useTableComputing } from './hooks/use-table-comuting'
-import { TrackModal } from './tracks-modal/track-modal'
 import { useTrackModalOpen } from './tracks-modal/use-tracks-modal-open'
 import { TrackModalProvider } from './tracks-modal/track-modal-provider'
 import { TableLayout } from './components/table-layout'
 import { ActionButton } from './components/action-button'
+import { AddTrackModal } from './tracks-modal/add-track-modal'
 
 export interface Track {
   id: string
@@ -98,12 +98,7 @@ const AppContent = () => {
         }
       ></TracksTable>
 
-      <TrackModal
-        selectedMonth={filters.selectedMonth}
-        selectedYear={filters.selectedYear}
-        trackCreate={trackCreate}
-        trackUpdate={trackUpdate}
-      />
+      <AddTrackModal trackCreate={trackCreate} />
     </TableLayout>
   )
 }
