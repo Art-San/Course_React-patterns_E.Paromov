@@ -15,6 +15,7 @@ import { TrackModalProvider } from './tracks-modal/track-modal-provider'
 import { TableLayout } from './components/table-layout'
 import { ActionButton } from './components/action-button'
 import { AddTrackModal } from './tracks-modal/add-track-modal'
+import { AddTrackToCellModal } from './tracks-modal/add-track-to-cell-modal'
 
 export interface Track {
   id: string
@@ -71,7 +72,13 @@ const AppContent = () => {
                 day={day}
                 task={task}
                 getDayTracks={getDayTracks}
-                onCellClick={cellClick}
+                onCellClick={() =>
+                  cellClick({
+                    ...filters,
+                    day,
+                    task
+                  })
+                }
                 tracks={getDayTracks(day, task).map((track) => (
                   <TableTrack
                     key={track.id}
@@ -99,6 +106,7 @@ const AppContent = () => {
       ></TracksTable>
 
       <AddTrackModal trackCreate={trackCreate} />
+      <AddTrackToCellModal trackCreate={trackCreate} />
     </TableLayout>
   )
 }
