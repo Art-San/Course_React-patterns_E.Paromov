@@ -1,6 +1,6 @@
-import { useTrackModalContext } from './components/track-modal-context'
+import { useTrackModalContext } from './track-modal-context'
 
-export function useTrackModalOpen() {
+export function useTracksModalOpen() {
   const context = useTrackModalContext()
   // const context = useContext(trackModalContext)
 

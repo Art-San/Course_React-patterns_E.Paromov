@@ -10,12 +10,13 @@ import { useTracksFilter } from './hooks/use-tracks-filter'
 import { TracksFilters } from './components/tracks-filters'
 import { useTasks } from './hooks/use-tasks'
 import { useTableComputing } from './hooks/use-table-comuting'
-import { useTrackModalOpen } from './tracks-modal/use-tracks-modal-open'
-import { TrackModalProvider } from './tracks-modal/track-modal-provider'
+import { useTracksModalOpen } from './tracks-modal/shared/use-tracks-modal-open'
+import { TrackModalProvider } from './tracks-modal/shared/track-modal-provider'
 import { TableLayout } from './components/table-layout'
 import { ActionButton } from './components/action-button'
-import { AddTrackModal } from './tracks-modal/add-track-modal'
-import { AddTrackToCellModal } from './tracks-modal/add-track-to-cell-modal'
+import { AddTrackModal } from './tracks-modal/add-track/add-track-modal'
+import { AddTrackToCellModal } from './tracks-modal/add-track-to-cell/add-track-to-cell-modal'
+import { UpdateTrackModal } from './tracks-modal'
 
 export interface Track {
   id: string
@@ -36,7 +37,7 @@ const AppContent = () => {
   const { getDayTracks, getDayTotal, getTaskTotal, getTotal } =
     useTableComputing({ tracks: filteredTracks })
 
-  const { createClick, cellClick, trackClick } = useTrackModalOpen()
+  const { createClick, cellClick, trackClick } = useTracksModalOpen()
 
   return (
     <TableLayout>
@@ -107,6 +108,7 @@ const AppContent = () => {
 
       <AddTrackModal trackCreate={trackCreate} />
       <AddTrackToCellModal trackCreate={trackCreate} />
+      <UpdateTrackModal trackUpdate={trackUpdate} />
     </TableLayout>
   )
 }

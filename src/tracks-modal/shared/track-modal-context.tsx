@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import { useTrackModal } from '../hooks/use-track-modal'
+import { useTrackModal } from './use-track-modal'
 
 type TrackModalContext = ReturnType<typeof useTrackModal>
 export const trackModalContext = createContext<TrackModalContext | null>(null)

@@ -135,8 +135,8 @@
     },
     {
       "id": "k4FAVn3gFuh-CdishIJ3E",
-      "name": "json",
-      "task": "response",
+      "name": "update",
+      "task": "Ответить по телефону",
       "hours": 0.5,
       "date": "2025-01-22"
     },

@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { Track } from '../../hooks/use-tracks'
-import { useFormData } from './use-form-data'
-import { SelectedCell } from '../types'
+import { useFormData } from '../shared/use-form-data'
+import { SelectedCell } from '../shared/types'
 
 export function useAddTrackTocCell({
   trackCreate,

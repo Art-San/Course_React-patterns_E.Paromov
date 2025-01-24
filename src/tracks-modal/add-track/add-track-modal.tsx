@@ -1,8 +1,8 @@
-import { Track } from '../App'
-import { TrackModalView } from './components/track-modal'
-import { TrackForm } from './components/track-form'
-import { useTrackModalContext } from './components/track-modal-context'
-import { useAddTrackForm } from './hooks/use-add-track-form'
+import { Track } from '../../App'
+import { TrackModalView } from '../shared/track-modal'
+import { TrackForm } from '../shared/track-form'
+import { useTrackModalContext } from '../shared/track-modal-context'
+import { useAddTrackForm } from './use-add-track-form'
 
 export function AddTrackModal({
   trackCreate

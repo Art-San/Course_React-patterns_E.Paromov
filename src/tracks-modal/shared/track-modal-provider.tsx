@@ -1,5 +1,5 @@
-import { trackModalContext } from './components/track-modal-context'
-import { useTrackModal } from './hooks/use-track-modal'
+import { trackModalContext } from './track-modal-context'
+import { useTrackModal } from './use-track-modal'
 
 export function TrackModalProvider({
   children

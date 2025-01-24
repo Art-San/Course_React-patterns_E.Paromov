@@ -6,13 +6,20 @@ export function TrackForm({
   onInputChange,
   onSubmit,
   onCancel,
-  submitText = 'Add Track'
+  submitText = 'Add Track',
+  disabled = {}
 }: {
   formData: Omit<Track, 'id'>
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
   onCancel: () => void
   submitText: string
+  disabled?: {
+    name?: boolean
+    task?: boolean
+    hours?: boolean
+    date?: boolean
+  }
 }) {
   return (
     <form onSubmit={onSubmit} className={styles.form}>
@@ -25,6 +32,7 @@ export function TrackForm({
           value={formData.name}
           onChange={onInputChange}
           required
+          disabled={disabled.name}
         />
       </div>
 
@@ -37,6 +45,7 @@ export function TrackForm({
           value={formData.task}
           onChange={onInputChange}
           required
+          disabled={disabled.task}
         />
       </div>
 
@@ -51,6 +60,7 @@ export function TrackForm({
           min="0"
           step="0.5"
           required
+          disabled={disabled.hours}
         />
       </div>
 
@@ -63,6 +73,7 @@ export function TrackForm({
           value={formData.date}
           onChange={onInputChange}
           required
+          disabled={disabled.date}
         />
       </div>
 

@@ -1,9 +1,9 @@
-import { Track } from '../App'
-import { TrackModalView } from './components/track-modal'
-import { TrackForm } from './components/track-form'
-import { useTrackModalContext } from './components/track-modal-context'
+import { Track } from '../../App'
+import { TrackModalView } from '../shared/track-modal'
+import { TrackForm } from '../shared/track-form'
+import { useTrackModalContext } from '../shared/track-modal-context'
 
-import { useAddTrackTocCell } from './hooks/use-add-track-to-cell'
+import { useAddTrackTocCell } from './use-add-track-to-cell'
 
 export function AddTrackToCellModal({
   trackCreate
@@ -28,6 +28,10 @@ export function AddTrackToCellModal({
         onSubmit={handleSubmit}
         onCancel={close}
         submitText="Add Track"
+        disabled={{
+          date: true,
+          task: true
+        }}
       />
     </TrackModalView>
   )
