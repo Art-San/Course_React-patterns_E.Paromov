@@ -40,7 +40,7 @@ const AppContent = () => {
     useTableComputing({ tracks: filteredTracks })
 
   const { cellClick, createClick, trackClick } = useTracksModalOpen()
-
+  console.log(34, cellClick)
   return (
     <TableLayout>
       <TracksFilters
@@ -106,8 +106,8 @@ const AppContent = () => {
       ></TracksTable>
 
       <AddTrackModal trackCreate={trackCreate} />
-      <AddTrackToCellModal trackCreate={trackCreate} />
-      <UpdateTrackModal trackUpdate={trackUpdate} />
+      {/* <AddTrackToCellModal trackCreate={trackCreate} />
+      <UpdateTrackModal trackUpdate={trackUpdate} /> */}
     </TableLayout>
   )
 }

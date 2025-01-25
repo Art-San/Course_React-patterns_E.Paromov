@@ -36,13 +36,6 @@
       "date": "2024-12-31"
     },
     {
-      "id": "0yaj_Sx4y7VoerionlKhh",
-      "name": "ggg",
-      "task": "ggg",
-      "hours": 0.5,
-      "date": "2025-01-03"
-    },
-    {
       "name": "перевозка",
       "task": "поставить газель",
       "hours": 0,
@@ -73,16 +66,9 @@
     {
       "id": "zr9ZrKHNFlSx0uuezp7a5",
       "name": "Новая задача",
-      "task": "Выжать белье",
+      "task": "Выжать",
       "hours": 3,
       "date": "2025-01-09"
-    },
-    {
-      "id": "vc1060OfeTHRr6aaIwrE3",
-      "name": "повторить",
-      "task": "Выжать белье",
-      "hours": 3,
-      "date": "2025-01-31"
     },
     {
       "id": "3lgNwSliDI5sYzcPV12BS",
@@ -99,53 +85,25 @@
       "date": "2025-01-06"
     },
     {
-      "id": "8J9Iyn245a_N2lnZLV02f",
-      "name": "16",
-      "task": "вынести мусор",
-      "hours": 0,
-      "date": "2025-01-16"
-    },
-    {
-      "id": "ZDm6Y6EC8ptBEZvZYbljP",
-      "name": "16",
-      "task": "вынести мусор",
-      "hours": 0,
-      "date": "2025-01-16"
-    },
-    {
-      "id": "XuIUiIChebfmomhaKs7oU",
-      "name": "16",
-      "task": "вынести мусор",
-      "hours": 0,
-      "date": "2025-01-16"
-    },
-    {
-      "id": "fU9WwNt4A4vUtrKi0NNvR",
-      "name": "test video",
-      "task": "ffkdlkkd",
-      "hours": 4,
-      "date": "2025-01-22"
-    },
-    {
-      "id": "R1AklL6yEZiB3yM742mV_",
-      "name": "test ",
-      "task": "testick",
-      "hours": 0.5,
-      "date": "2025-01-22"
-    },
-    {
-      "id": "k4FAVn3gFuh-CdishIJ3E",
+      "id": "k4FAVn3gFuh-CdshIJ3E",
       "name": "update",
       "task": "Ответить по телефону",
       "hours": 0.5,
       "date": "2025-01-22"
     },
     {
-      "id": "CGav5FZmXf6A3HfvwknJ9",
-      "name": "Add Track To Cell",
-      "task": "Add Track To Cell",
-      "hours": 0,
-      "date": "2025-01-25"
+      "id": "k4FAVn3gFuh-Cdsh1IJ3E",
+      "name": "update1",
+      "task": "Ответить по телефону1",
+      "hours": 0.5,
+      "date": "2025-01-22"
+    },
+    {
+      "id": "k4FAVn3gFuh-Cds2hIJ3E",
+      "name": "update2",
+      "task": "Ответить по телефону2",
+      "hours": 0.5,
+      "date": "2025-01-22"
     }
   ]
 }

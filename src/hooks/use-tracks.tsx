@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { nanoid } from 'nanoid'
+import { useTracksApi } from './tracks-api-context'
 
 export interface Track {
   id: string
@@ -10,6 +11,7 @@ export interface Track {
 }
 
 export function useTracks() {
+  const api = useTracksApi()
   const [tracks, setTracks] = useState<Track[]>([])
 
   useEffect(() => {
@@ -17,81 +19,31 @@ export function useTracks() {
   }, [])
 
   const fetchTracks = async () => {
-    try {
-      const response = await fetch('http://localhost:3001/tracks')
-
-      const data = await response.json()
-      setTracks(data)
-    } catch (error) {
-      console.error('Error fetching tracks:', error)
-    }
+    const data = await api.fetchTracks()
+    setTracks(data)
   }
 
   const trackDelete = async (trackId: string) => {
     if (!window.confirm('Are you sure you want to delete this track?')) {
       return
     }
-    try {
-      const response = await fetch(`http://localhost:3001/tracks/${trackId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      if (response.ok) {
-        fetchTracks()
-      } else {
-        console.error('Failed to delete track:', await response.text())
-      }
-    } catch (error) {
-      console.error('Error deleting track:', error)
-    }
+    await api.deleteTrack(trackId)
+    fetchTracks()
   }
 
   const trackUpdate = async (track: Track) => {
-    try {
-      const response = await fetch(`http://localhost:3001/tracks/${track.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(track)
-      })
-
-      if (response.ok) {
-        fetchTracks()
-      } else {
-        console.error('Failed to save track:', await response.text())
-      }
-    } catch (error) {
-      console.error('Error saving track:', error)
-    }
+    await api.updateTrack(track)
+    fetchTracks()
   }
 
   const trackCreate = async (track: Omit<Track, 'id'>) => {
-    try {
-      const body = {
-        ...track,
-        id: nanoid()
-      }
-
-      const response = await fetch('http://localhost:3001/tracks', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(body)
-      })
-
-      console.log(123, response.json())
-      if (response.ok) {
-        fetchTracks()
-      } else {
-        console.error('Failed to save track:', await response.text())
-      }
-    } catch (error) {
-      console.error('Error saving track:', error)
+    const newTrack = {
+      ...track,
+      id: nanoid()
     }
+
+    await api.createTrack(newTrack)
+    fetchTracks()
   }
 
   return {
