@@ -24,7 +24,10 @@ export function TracksAction({
       </button>
       <button
         className={`${styles.actionButton} ${styles.deleteButton}`}
-        onClick={(e) => onDeleteTrack(track.id)}
+        onClick={(e) => {
+          e.stopPropagation()
+          onDeleteTrack(track.id)
+        }}
         title="Delete"
       >
         ×

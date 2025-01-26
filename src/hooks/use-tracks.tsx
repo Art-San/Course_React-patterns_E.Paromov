@@ -24,10 +24,11 @@ export function useTracks() {
   }
 
   const trackDelete = async (trackId: string) => {
-    if (!window.confirm('Are you sure you want to delete this track?')) {
-      return
-    }
-    await api.deleteTrack(trackId)
+    console.log(999, 'fun trackDelete')
+    // if (!window.confirm('Are you sure you want to delete this track?')) {
+    //   return
+    // }
+    // await api.deleteTrack(trackId)
     fetchTracks()
   }
 

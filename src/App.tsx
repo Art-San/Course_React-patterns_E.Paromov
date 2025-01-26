@@ -72,13 +72,14 @@ const AppContent = () => {
                 day={day}
                 task={task}
                 getDayTracks={getDayTracks}
-                onCellClick={() =>
-                  cellClick({
+                onCellClick={() => {
+                  console.log(23, 'onCellClick')
+                  return cellClick({
                     ...filters,
                     day,
                     task
                   })
-                }
+                }}
                 tracks={getDayTracks(day, task).map((track) => (
                   <TableTrack
                     key={track.id}

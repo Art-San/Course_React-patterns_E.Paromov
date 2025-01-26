@@ -8,7 +8,7 @@ export function useTrackModal() {
   const [selectedTrack, setSelectedTrack] = useState<Track | null>(null)
 
   const cellClick = (selectedCell: SelectedCell) => {
-    console.log(11, selectedCell)
+    // console.log(11, selectedCell)
     setSelectedCell(selectedCell)
     setSelectedTrack(null) // Clear the selected track when a cell is clicked
     setIsCreate(true)
